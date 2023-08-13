@@ -28,6 +28,7 @@ function Client () {
   this.commander = new Commander(this)
   this.clock = new Clock(this)
 
+// Define serial port here, name is just a literal but hopefully will add custom input later
   this.port = new SerialPort({ path: '/dev/tty.usbserial-10', baudRate: 115200},
 									function(err) { 
 										process.stdout.write(err);
@@ -35,7 +36,6 @@ function Client () {
 							);
   
   this.port.on('open', function() {
-	process.stdout.write("opened!!!");
 	this.port.write("mnc");
 	  // open logic
 	})
@@ -328,8 +328,10 @@ function Client () {
         this.drawSprite(x, y, glyph, this.makeStyle(x, y, glyph, selection))
       }
     }
+	// prints to the port
     this.port.write(outputString);	
-	//process.stdout.write(outputString + "\n" + "gridsize: " + outputString.length);
+    // shows what the output string looks like in console
+	// process.stdout.write(outputString + "\n" + "gridsize: " + outputString.length);
 
   }
 
