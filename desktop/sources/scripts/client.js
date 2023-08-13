@@ -11,6 +11,8 @@
 /* global Clock */
 /* global Theme */
 
+const {SerialPort} = require('serialport');
+
 function Client () {
   this.version = 178
   this.library = library
@@ -25,6 +27,19 @@ function Client () {
   this.cursor = new Cursor(this)
   this.commander = new Commander(this)
   this.clock = new Clock(this)
+
+  this.port = new SerialPort({ path: '/dev/tty.usbserial-10', baudRate: 115200},
+									function(err) { 
+										process.stdout.write(err);
+									}, 
+							);
+  
+  this.port.on('open', function() {
+	process.stdout.write("opened!!!");
+	this.port.write("mnc");
+	  // open logic
+	})
+
 
   // Settings
   this.scale = window.devicePixelRatio
@@ -141,6 +156,7 @@ function Client () {
     this.el.className = 'ready'
 
     this.toggleGuide()
+	
   }
 
   this.reset = () => {
@@ -293,18 +309,28 @@ function Client () {
 
   this.drawProgram = () => {
     const selection = this.cursor.read()
+	let outputString = "";
     for (let y = 0; y < this.orca.h; y++) {
       for (let x = 0; x < this.orca.w; x++) {
         // Handle blanks
-        if (this.isInvisible(x, y)) { continue }
+        if (this.isInvisible(x, y)) { 
+			if(x < 16 && y < 8)
+				outputString = "." + outputString; 
+			continue 
+		}
         // Make Glyph
         const g = this.orca.glyphAt(x, y)
         // Get glyph
         const glyph = g !== '.' ? g : this.isCursor(x, y) ? (this.clock.isPaused ? '~' : '@') : this.isMarker(x, y) ? '+' : g
         // Make Style
+		if(x < 16 && y < 8)
+			outputString = glyph + outputString
         this.drawSprite(x, y, glyph, this.makeStyle(x, y, glyph, selection))
       }
     }
+    this.port.write(outputString);	
+	//process.stdout.write(outputString + "\n" + "gridsize: " + outputString.length);
+
   }
 
   this.makeStyle = (x, y, glyph, selection) => {

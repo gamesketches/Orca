@@ -28,7 +28,9 @@
     "electron-packager": "^15.1.0"
   },
   "dependencies": {
-    "node-osc": "^4.1.9"
+    "node-gyp": "^9.3.0",
+    "node-osc": "^4.1.9",
+    "serialport": "^10.5.0"
   },
   "standard": {
     "globals": [

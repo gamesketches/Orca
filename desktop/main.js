@@ -4,6 +4,7 @@
 
 const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
+const {SerialPort} = require('serialport')
 
 let isShown = true
 
@@ -36,6 +37,7 @@ app.on('ready', () => {
   })
 
   app.win.on('show', function () {
+	console.log("hello")
     isShown = true
   })
 
@@ -45,6 +47,7 @@ app.on('ready', () => {
 
   app.on('activate', () => {
     if (app.win === null) {
+	  console.log("creating window")
       createWindow()
     } else {
       app.win.show()
